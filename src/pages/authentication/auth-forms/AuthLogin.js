@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link as RouterLink } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 // material-ui
 import {
@@ -25,6 +26,9 @@ import { Formik } from 'formik';
 // project import
 import FirebaseSocial from './FirebaseSocial';
 import AnimateButton from 'components/@extended/AnimateButton';
+import { loginUser } from '../api/auth';
+import { setStorage } from '../../../utils/localstorage-utils';
+import { AppContext } from '../../../context/context';
 
 // assets
 import { EyeOutlined, EyeInvisibleOutlined } from '@ant-design/icons';
@@ -34,21 +38,38 @@ import { EyeOutlined, EyeInvisibleOutlined } from '@ant-design/icons';
 const AuthLogin = () => {
     const [checked, setChecked] = React.useState(false);
 
+    const { setIsLoggedIn, setRole } = React.useContext(AppContext);
+
     const [showPassword, setShowPassword] = React.useState(false);
     const handleClickShowPassword = () => {
         setShowPassword(!showPassword);
+    };
+
+    const handleSubmit = async (values) => {
+        const response = await loginUser(values);
+        console.log(response);
+        if (response.token) {
+            setStorage('user_token', response.token);
+            setIsLoggedIn(true);
+            setRole(response.data.role);
+            setStorage('role', response.data.role);
+            setStorage('name', response.data.name);
+            navigate('/');
+        }
     };
 
     const handleMouseDownPassword = (event) => {
         event.preventDefault();
     };
 
+    let navigate = useNavigate();
+
     return (
         <>
             <Formik
                 initialValues={{
-                    email: 'info@codedthemes.com',
-                    password: '123456',
+                    email: 'email1@test.com',
+                    password: 'sejal1',
                     submit: null
                 }}
                 validationSchema={Yup.object().shape({
@@ -57,6 +78,7 @@ const AuthLogin = () => {
                 })}
                 onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
                     try {
+                        handleSubmit(values);
                         setStatus({ success: false });
                         setSubmitting(false);
                     } catch (err) {

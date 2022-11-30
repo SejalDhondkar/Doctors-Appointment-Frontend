@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 // material-ui
 import {
@@ -26,15 +27,20 @@ import { Formik } from 'formik';
 import FirebaseSocial from './FirebaseSocial';
 import AnimateButton from 'components/@extended/AnimateButton';
 import { strengthColor, strengthIndicator } from 'utils/password-strength';
+import { registerUser } from '../api/auth';
 
 // assets
 import { EyeOutlined, EyeInvisibleOutlined } from '@ant-design/icons';
 
 // ============================|| FIREBASE - REGISTER ||============================ //
 
-const AuthRegister = () => {
+const AuthRegister = (props) => {
     const [level, setLevel] = useState();
     const [showPassword, setShowPassword] = useState(false);
+
+    let navigate = useNavigate();
+    const userRole = props.role;
+
     const handleClickShowPassword = () => {
         setShowPassword(!showPassword);
     };
@@ -48,6 +54,14 @@ const AuthRegister = () => {
         setLevel(strengthColor(temp));
     };
 
+    const handleSubmit = async (values) => {
+        const response = await registerUser(values);
+        console.log(response);
+        if (response) {
+            navigate('/login');
+        }
+    };
+
     useEffect(() => {
         changePassword('');
     }, []);
@@ -59,9 +73,11 @@ const AuthRegister = () => {
                     firstname: '',
                     lastname: '',
                     email: '',
-                    company: '',
+                    phone: '',
                     password: '',
-                    submit: null
+                    submit: null,
+                    email_verified: false,
+                    role: userRole
                 }}
                 validationSchema={Yup.object().shape({
                     firstname: Yup.string().max(255).required('First Name is required'),
@@ -71,6 +87,8 @@ const AuthRegister = () => {
                 })}
                 onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
                     try {
+                        handleSubmit(values);
+                        // console.log(values);
                         setStatus({ success: false });
                         setSubmitting(false);
                     } catch (err) {
@@ -129,21 +147,21 @@ const AuthRegister = () => {
                             </Grid>
                             <Grid item xs={12}>
                                 <Stack spacing={1}>
-                                    <InputLabel htmlFor="company-signup">Company</InputLabel>
+                                    <InputLabel htmlFor="company-signup">Mobile Number</InputLabel>
                                     <OutlinedInput
                                         fullWidth
-                                        error={Boolean(touched.company && errors.company)}
+                                        error={Boolean(touched.phone && errors.phone)}
                                         id="company-signup"
-                                        value={values.company}
-                                        name="company"
+                                        value={values.phone}
+                                        name="phone"
                                         onBlur={handleBlur}
                                         onChange={handleChange}
                                         placeholder="Demo Inc."
                                         inputProps={{}}
                                     />
-                                    {touched.company && errors.company && (
+                                    {touched.phone && errors.phone && (
                                         <FormHelperText error id="helper-text-company-signup">
-                                            {errors.company}
+                                            {errors.phone}
                                         </FormHelperText>
                                     )}
                                 </Stack>

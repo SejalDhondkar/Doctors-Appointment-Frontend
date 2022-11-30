@@ -4,11 +4,23 @@ import { Box, Typography } from '@mui/material';
 // project import
 import NavGroup from './NavGroup';
 import menuItem from 'menu-items';
+import { getStorage } from 'utils/localstorage-utils';
+import doctorList from 'menu-items/doctorList';
 
 // ==============================|| DRAWER CONTENT - NAVIGATION ||============================== //
 
 const Navigation = () => {
-    const navGroups = menuItem.items.map((item) => {
+    const role = getStorage('role');
+
+    let List = {};
+
+    if (role == 'Doctor') {
+        List = doctorList;
+    } else {
+        List = menuItem;
+    }
+
+    const navGroups = List.items.map((item) => {
         switch (item.type) {
             case 'group':
                 return <NavGroup key={item.id} item={item} />;

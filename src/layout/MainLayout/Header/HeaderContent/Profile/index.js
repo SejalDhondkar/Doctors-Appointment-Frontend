@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
-import { useRef, useState } from 'react';
+import { useRef, useState, useContext, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 // material-ui
 import { useTheme } from '@mui/material/styles';
@@ -28,6 +29,8 @@ import SettingTab from './SettingTab';
 // assets
 import avatar1 from 'assets/images/users/avatar-1.png';
 import { LogoutOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
+import { getStorage, clearStorage } from 'utils/localstorage-utils';
+import { AppContext } from 'context/context';
 
 // tab panel wrapper
 function TabPanel({ children, value, index, ...other }) {
@@ -56,8 +59,14 @@ function a11yProps(index) {
 const Profile = () => {
     const theme = useTheme();
 
+    const navigate = useNavigate();
+
+    const { setIsLoggedIn } = useContext(AppContext);
+
     const handleLogout = async () => {
-        // logout
+        clearStorage();
+        setIsLoggedIn(false);
+        navigate('/login');
     };
 
     const anchorRef = useRef(null);
@@ -81,6 +90,19 @@ const Profile = () => {
 
     const iconBackColorOpen = 'grey.300';
 
+    const userName = getStorage('name');
+    const userRole = getStorage('role');
+
+    const redirect = () => {
+        if (!userName || !userRole) {
+            navigate('/login');
+        }
+    };
+
+    useEffect(() => {
+        redirect();
+    });
+
     return (
         <Box sx={{ flexShrink: 0, ml: 0.75 }}>
             <ButtonBase
@@ -98,7 +120,7 @@ const Profile = () => {
             >
                 <Stack direction="row" spacing={2} alignItems="center" sx={{ p: 0.5 }}>
                     <Avatar alt="profile user" src={avatar1} sx={{ width: 32, height: 32 }} />
-                    <Typography variant="subtitle1">John Doe</Typography>
+                    <Typography variant="subtitle1">{userName}</Typography>
                 </Stack>
             </ButtonBase>
             <Popper
@@ -141,9 +163,9 @@ const Profile = () => {
                                                     <Stack direction="row" spacing={1.25} alignItems="center">
                                                         <Avatar alt="profile user" src={avatar1} sx={{ width: 32, height: 32 }} />
                                                         <Stack>
-                                                            <Typography variant="h6">John Doe</Typography>
+                                                            <Typography variant="h6">{userName}</Typography>
                                                             <Typography variant="body2" color="textSecondary">
-                                                                UI/UX Designer
+                                                                {userRole}
                                                             </Typography>
                                                         </Stack>
                                                     </Stack>
