@@ -8,6 +8,7 @@ import MainLayout from 'layout/MainLayout';
 const DashboardDefault = Loadable(lazy(() => import('pages/dashboard')));
 
 const DoctorInfo = Loadable(lazy(() => import('pages/doctor/info-pages/DoctorInfo')));
+const PatientList = Loadable(lazy(() => import('pages/doctor/patient-info/PatientList')));
 
 // ==============================|| MAIN ROUTING ||============================== //
 
@@ -22,6 +23,10 @@ const DoctorRoutes = {
         {
             path: 'details',
             element: <DoctorInfo />
+        },
+        {
+            path: 'patient-list',
+            element: <PatientList />
         }
     ]
 };

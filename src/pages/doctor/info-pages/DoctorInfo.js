@@ -238,7 +238,7 @@ const DoctorInfo = () => {
                                         </Grid>
                                     </Grid>
                                 </MainCard>
-
+                                <br></br>
                                 <MainCard title="Clinic Details">
                                     <Stack spacing={0.75} sx={{ mt: -1.5 }}></Stack>
                                     <Grid container spacing={3}>
@@ -349,6 +349,7 @@ const DoctorInfo = () => {
                                         </Grid>
                                     </Grid>
                                 </MainCard>
+                                <br></br>
                                 <Grid item xs={12}>
                                     <AnimateButton>
                                         <Button

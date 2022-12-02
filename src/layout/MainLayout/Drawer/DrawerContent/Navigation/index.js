@@ -6,6 +6,7 @@ import NavGroup from './NavGroup';
 import menuItem from 'menu-items';
 import { getStorage } from 'utils/localstorage-utils';
 import doctorList from 'menu-items/doctorList';
+import patientList from 'menu-items/patientList';
 
 // ==============================|| DRAWER CONTENT - NAVIGATION ||============================== //
 
@@ -16,6 +17,8 @@ const Navigation = () => {
 
     if (role == 'Doctor') {
         List = doctorList;
+    } else if (role == 'Patient') {
+        List = patientList;
     } else {
         List = menuItem;
     }

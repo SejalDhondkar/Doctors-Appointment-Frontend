@@ -37,16 +37,16 @@ const doctorList = {
                 },
                 {
                     id: 'add-info',
-                    title: 'Edit Details',
+                    title: 'Search Doctors',
                     type: 'item',
-                    url: '/details',
+                    url: '/doctors',
                     icon: icons.ProfileOutlined
                 },
                 {
-                    id: 'patient-list',
-                    title: 'Patients List',
+                    id: 'history',
+                    title: 'History',
                     type: 'item',
-                    url: '/patient-list',
+                    url: '/previous-bookings',
                     icon: icons.ProfileOutlined
                 }
                 // {
