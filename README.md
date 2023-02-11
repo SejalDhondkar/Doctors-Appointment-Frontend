@@ -10,7 +10,7 @@ Health Bridge is a web based Doctor's Appointment System where Patients can view
 
 ## Features
 
-- Role based authentication with 3 user roles: Doctors, Patients and Admin
+- Role based authentication with user roles: Doctors and Patients 
 - User Authentication
      
   - Login Page for all users
