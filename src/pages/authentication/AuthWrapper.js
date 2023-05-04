@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 // material-ui
 import { Box, Grid } from '@mui/material';
 
+
 // project import
 import AuthCard from './AuthCard';
 import Logo from 'components/Logo';

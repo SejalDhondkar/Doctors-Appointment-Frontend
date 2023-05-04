@@ -16,6 +16,7 @@ const Color = Loadable(lazy(() => import('pages/components-overview/Color')));
 const Shadow = Loadable(lazy(() => import('pages/components-overview/Shadow')));
 const AntIcons = Loadable(lazy(() => import('pages/components-overview/AntIcons')));
 
+
 // ==============================|| MAIN ROUTING ||============================== //
 
 const MainRoutes = {
@@ -55,7 +56,8 @@ const MainRoutes = {
             path: 'icons/ant',
             element: <AntIcons />
         }
-    ]
+    ],
+    
 };
 
 export default MainRoutes;
