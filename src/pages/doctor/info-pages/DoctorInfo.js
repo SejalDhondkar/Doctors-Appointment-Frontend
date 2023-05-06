@@ -314,6 +314,7 @@ const DoctorInfo = () => {
                                                     onChange={handleChange}
                                                     placeholder="GMC Nagpur"
                                                     inputProps={{}}
+                                                    disabled
                                                 />
                                             </Stack>
                                         </Grid>
@@ -329,6 +330,7 @@ const DoctorInfo = () => {
                                                     onChange={handleChange}
                                                     placeholder="Demo Inc."
                                                     inputProps={{}}
+                                                    disabled
                                                 />
                                             </Stack>
                                         </Grid>
@@ -344,10 +346,12 @@ const DoctorInfo = () => {
                                                     onChange={handleChange}
                                                     placeholder=""
                                                     inputProps={{}}
+                                                    disabled
                                                 />
                                             </Stack>
                                         </Grid>
                                     </Grid>
+                                    <Typography sx={{fontStyle: 'italic'}} variant="body2">*Add/Edit timings in Manage Slots section</Typography>
                                 </MainCard>
                                 <br></br>
                                 <Grid item xs={12}>

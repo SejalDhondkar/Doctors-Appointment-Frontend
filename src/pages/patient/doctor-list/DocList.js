@@ -13,6 +13,7 @@ import { useNavigate } from 'react-router-dom';
 
 const DocList = () => {
     const [docs, setDocs] = useState(undefined);
+    // const [user, setUser] = useState(undefined);
 
     const getDocList = async () => {
         const response = await getDoctorList();
@@ -28,71 +29,57 @@ const DocList = () => {
     //     console.log('clicked');
     // };
 
-    // useEffect(() => {
-    //     getDocList();
-    // }, []);
+    useEffect(() => {
+        getDocList();
+    }, []);
+
+    // const setDocInfo = (doc) => {
+    //     setUser(doc);
+    //     handleRowClick;
+    // }
+
+    // const handleRowClick = () => {
+    //     // console.log(props);
+    //     props.history.push({
+    //         pathname: '/book',
+    //         state: [user]
+    //     });
+    // }
 
     return (
         <ComponentSkeleton>
             <Grid container spacing={3}>
                 <Grid item xs={12}>
                     <Stack spacing={3}>
-                        <MainCard>
-                            <Stack spacing={1} sx={{ mt: -1.5 }}>
-                                <Typography variant="h4">Dr. Abhimanyu Singh, MD</Typography>
-                                <br></br>
-                                <Typography variant="h6">Specialization: Consultant Physician, Cardiologist</Typography>
-                                <Typography variant="h6">Experience: 13 years</Typography>
-                                <Typography variant="h6">Registration No.: 46735</Typography>
-                                <br></br>
-                                <Typography variant="h4">Clinic Details</Typography>
-                                <Typography variant="h5">Life Care Clinic</Typography>
-                                <Typography variant="h6">
-                                    Address: Hasnain Tower 1St Floor Nr.Shimla Park M.P.Rd. Kausa Mumbra Mumbra Thane, Mumbai, Maharashtra
-                                    400612
-                                </Typography>
-                                <Typography variant="h5">Timings: Monday to Saturday, 11AM to 7PM</Typography>
-                                <br></br>
-                                <Button
-                                    size="large"
-                                    variant="contained"
-                                    color="primary"
-                                    onClick={() => {
-                                        navigate('/book');
-                                    }}
-                                >
-                                    Book Appointment
-                                </Button>
-                            </Stack>
-                        </MainCard>
-                        <MainCard>
-                            <Stack spacing={1} sx={{ mt: -1.5 }}>
-                                <Typography variant="h4">Dr. Deepa Ghule, MD (IDCCM, FCEE)</Typography>
-                                <br></br>
-                                <Typography variant="h6">Specialization: Consultant Physician, Diabetologist</Typography>
-                                <Typography variant="h6">Experience: 10 years</Typography>
-                                <Typography variant="h6">Registration No.: 2013/03/0404</Typography>
-                                <br></br>
-                                <Typography variant="h4">Clinic Details</Typography>
-                                <Typography variant="h5">Life Care Clinic</Typography>
-                                <Typography variant="h6">
-                                    Address: Hasnain Tower 1St Floor Nr.Shimla Park M.P.Rd. Kausa Mumbra Mumbra Thane, Mumbai, Maharashtra
-                                    400612
-                                </Typography>
-                                <Typography variant="h5">Timings: Monday to Saturday, 11AM to 8PM</Typography>
-                                <br></br>
-                                <Button
-                                    size="large"
-                                    variant="contained"
-                                    color="primary"
-                                    onClick={() => {
-                                        navigate('/book');
-                                    }}
-                                >
-                                    Book Appointment
-                                </Button>
-                            </Stack>
-                        </MainCard>
+                        {docs &&
+                            docs.map((doc, index) => (
+                                <MainCard>
+                                    <Stack spacing={1} sx={{ mt: -1.5 }}>
+                                    <Typography variant="h4">
+                                        Dr. {doc.userId.firstname} {doc.userId.lastname}, {doc.degree}
+                                    </Typography>
+                                    <br></br>
+                                    <Typography variant="h6">Specialization: {doc.specialization}</Typography>
+                                    <Typography variant="h6">Experience: {doc.experience} Years</Typography>
+                                    <Typography variant="h6">Registration No.: {doc.registrationNo}</Typography>
+                                    <br></br>
+                                    <Typography variant="h4">Clinic Details</Typography>
+                                    <Typography variant="h5">{doc.clinicName}</Typography>
+                                    <Typography variant="h6">Address: {doc.clinicAddr}</Typography>
+                                    <Typography variant="h5">Timings: {doc.startTime}:00 to {doc.endTime}:00</Typography>
+                                    <Typography variant="h5">First Fees: Rs. {doc.firstFees} Follow-Up Fees: Rs.{doc.followupFees}</Typography>
+                                    <br></br>
+                                    <Button
+                                        onClick={() => navigate(`/book/${doc.userId._id}`)}
+                                        size="large"
+                                        variant="contained"
+                                        color="primary"
+                                    >
+                                        Book Appointment 
+                                    </Button>
+                                </Stack>
+                            </MainCard>
+                        ))}
                     </Stack>
                 </Grid>
             </Grid>
