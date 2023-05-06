@@ -1,9 +1,9 @@
 import PropTypes from 'prop-types';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 
 // material-ui
-import { Box, Link, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material';
+import { Box, Grid,InputLabel, OutlinedInput, FormHelperText, TextField , Dialog , DialogActions, DialogContent , DialogContentText , DialogTitle, Link, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography, Button } from '@mui/material';
 
 // third-party
 import NumberFormat from 'react-number-format';
@@ -11,21 +11,11 @@ import NumberFormat from 'react-number-format';
 // project import
 import Dot from 'components/@extended/Dot';
 import MainCard from 'components/MainCard';
-
-function createData(trackingNo, name, fat, carbs, protein) {
-    return { trackingNo, name, fat, carbs, protein };
-}
-
-const rows = [
-    createData('Brijlal Mohan', '02 December, 2022', '10:00 - 11:00', 0, 'In-Clinic'),
-    createData('Sanjana Singh', '01 December, 2022', '14:00 - 15:00', 1, 'Online'),
-    createData('Mukesh Sharma', '30 November, 2022', '11:00 - 12:00', 2, 'In-Clinic'),
-    createData('Priya Sinha', '30 November, 2022', '12:00 - 13:00', 1, 'In-Clinic'),
-    createData('Shanti Lal', '30 November, 2022', '16:00 - 17:00', 1, 'In-Clinic'),
-    createData('Sarvesh Jadhav', '29 November, 2022', '09:00 - 10:00', 1, 'In-Clinic'),
-    createData('Mukti Prakash', '29 November, 2022', '13:00 - 14:00', 2, 'Online'),
-    createData('Aditya Pawar', '29 November, 2022', '15:00 - 16:00', 1, 'In-Clinic')
-];
+import { getDoctorHistory, cancelSlot, addTreatment, getMeetLink, saveMeetLink } from '../api/info';
+import { Formik } from 'formik';
+import * as Yup from 'yup';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 function descendingComparator(a, b, orderBy) {
     if (b[orderBy] < a[orderBy]) {
@@ -57,34 +47,34 @@ function stableSort(array, comparator) {
 
 const headCells = [
     {
-        id: 'trackingNo',
+        id: 'name',
         align: 'left',
         disablePadding: false,
-        label: 'Name'
+        label: 'Patient Name'
     },
     {
-        id: 'name',
+        id: 'date',
         align: 'left',
         disablePadding: true,
         label: 'Appointment Date'
     },
     {
-        id: 'fat',
+        id: 'time',
         align: 'left',
         disablePadding: false,
         label: 'Appointment Time'
     },
     {
-        id: 'carbs',
+        id: 'status',
         align: 'left',
         disablePadding: false,
         label: 'Status'
     },
     {
-        id: 'protein',
+        id: 'action',
         align: 'right',
         disablePadding: false,
-        label: 'Mode'
+        label: 'Action'
     }
 ];
 
@@ -121,15 +111,15 @@ const OrderStatus = ({ status }) => {
     let title;
 
     switch (status) {
-        case 0:
-            color = 'warning';
+        case 'booked':
+            color = 'primary';
             title = 'Booked';
             break;
-        case 1:
+        case 'completed':
             color = 'success';
             title = 'Completed';
             break;
-        case 2:
+        case 'cancelled':
             color = 'error';
             title = 'Cancelled';
             break;
@@ -156,8 +146,103 @@ export default function OrderTable() {
     const [order] = useState('asc');
     const [orderBy] = useState('');
     const [selected] = useState([]);
+    const [items, setItems] = useState([]);
+    const [slotId, setSlotId] = useState(undefined);
+    const [history, setHistory] = useState({});
+    const [treatment, setTreatment] = useState({
+        complaint: '',
+        remarks: '',
+        fees: '',
+        prescription: ''
+    });
+
+    const [historyId, setHistoryId] = useState(undefined);
+    const [link, setLink] = useState('');
+
+    let navigate = useNavigate();
+
+    const [open, setOpen] = useState(false);
 
     const isSelected = (trackingNo) => selected.indexOf(trackingNo) !== -1;
+
+    const getAllItems = async () => {
+        const response = await getDoctorHistory();
+        if (response) {
+            setItems(response);
+            console.log(response);
+        }
+    };
+
+    const cancelThisSlot = async (slotId) => {
+        const data = {
+            bookingId: slotId
+        };
+        console.log(data);
+        const response = await cancelSlot(data);
+        if (response) {
+            console.log(response);
+            // setItems(response.data);
+            getAllItems();
+        }
+    };
+
+    const handleClickOpen = (row) => {
+        console.log(row);
+        setHistory(row);
+        setOpen(true);
+        // setTreatment({
+        //     complaint: '',
+        //     remarks: '',
+        //     fees: '',
+        //     prescription: ''
+        // })
+      };
+    
+      const handleClose = () => {
+        setOpen(false);
+      };
+
+      const handleSubmit = async (values) => {
+        values.historyId = history._id;
+        values.patientId = history.patientId;
+        console.log(values);
+        const response = await addTreatment(values);
+        if (response) {
+            console.log(response)
+            setOpen(false);
+            getAllItems();
+        }
+        
+      };
+
+      const startMeeting = async(hisId) => {
+        const response = await getMeetLink();
+        if (response) {
+            // console.log(response.joinLink);
+            // setLink(response.joinLink)
+            console.log(response.joinLink)
+            saveLink(hisId, response.joinLink);
+            window.open(response.joinLink, "_blank");
+        }
+      };
+
+      const saveLink = async(hisId, meetLink) => {
+        const body = {
+            historyId: hisId,
+            link: meetLink
+        }
+        console.log(body);
+        const response = await saveMeetLink(body);
+        if (response) {
+            console.log(response);
+            getAllItems();
+        }
+      };
+
+    useEffect(() => {
+        // console.log(docId);
+        getAllItems();
+    }, []);
 
     return (
         <Box>
@@ -185,8 +270,8 @@ export default function OrderTable() {
                     >
                         <OrderTableHead order={order} orderBy={orderBy} />
                         <TableBody>
-                            {stableSort(rows, getComparator(order, orderBy)).map((row, index) => {
-                                const isItemSelected = isSelected(row.trackingNo);
+                            {stableSort(items, getComparator(order, orderBy)).map((row, index) => {
+                                const isItemSelected = isSelected(row.name);
                                 const labelId = `enhanced-table-checkbox-${index}`;
 
                                 return (
@@ -196,20 +281,235 @@ export default function OrderTable() {
                                         sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                                         aria-checked={isItemSelected}
                                         tabIndex={-1}
-                                        key={row.trackingNo}
+                                        key={row.patientId}
                                         selected={isItemSelected}
                                     >
                                         <TableCell component="th" id={labelId} scope="row" align="left">
                                             <Link color="secondary" component={RouterLink} to="">
-                                                {row.trackingNo}
+                                                {row.patient[0].firstname} {row.patient[0].lastname}
                                             </Link>
                                         </TableCell>
-                                        <TableCell align="left">{row.name}</TableCell>
-                                        <TableCell align="left">{row.fat}</TableCell>
+                                        <TableCell align="left">{row.date}</TableCell>
+                                        <TableCell align="left">{row.startTime} - {row.endTime}</TableCell>
                                         <TableCell align="left">
-                                            <OrderStatus status={row.carbs} />
+                                            <OrderStatus status={row.appointmentStatus} />
                                         </TableCell>
-                                        <TableCell align="right">{row.protein}</TableCell>
+                                        <TableCell align="right">
+                                        {
+                                                row.appointmentStatus=='booked' && (
+                                                    <Button 
+                                                    variant={row.appointmentStatus=='booked'?'outlined':'disabled'}
+                                                    color="warning" 
+                                                    onClick={ ()=> {                                                   
+                                                        cancelThisSlot(row._id);
+                                                    }}>
+                                                    Cancel Slot
+                                                    </Button>
+                                                )
+                                            }
+                                            {
+                                                row.appointmentStatus=='booked' && !row.link &&(
+                                                    <Button 
+                                                        sx = {'margin-left: 10px'}
+                                                        variant={row.appointmentStatus=='booked'?'contained':'disabled'}
+                                                        color="primary" 
+                                                        onClick={ ()=> {    
+                                                            // setHistoryId(row._id)
+                                                            startMeeting(row._id)
+                                                        }}>
+                                                        Start Video Call
+                                                    </Button>
+                                                )
+                                            }
+                                            {
+                                                row.appointmentStatus=='booked' && row.link && (
+                                                    <Button 
+                                                        sx = {'margin-left: 10px'}
+                                                        variant={row.appointmentStatus=='booked'?'contained':'disabled'}
+                                                        color="primary" 
+                                                        onClick={ ()=> {    
+                                                            window.open(row.link, "_blank");
+                                                        }}>
+                                                        Video Call Started. Join
+                                                    </Button>
+                                                )
+                                            }
+                                            {
+                                                row.appointmentStatus=='booked' && (
+                                                    <Button 
+                                                        sx = {'margin-left: 10px'}
+                                                        variant={row.appointmentStatus=='booked'?'contained':'disabled'}
+                                                        color="success" 
+                                                        onClick={ ()=> {    
+                                                            // setHistory(row);                                            
+                                                            handleClickOpen(row);
+                                                        }}>
+                                                        Give Prescription
+                                                    </Button>
+                                                )
+                                            }
+                                            {
+                                                row.appointmentStatus=='completed' && (
+                                                    <Button 
+                                                        sx = {'margin-left: 10px'}
+                                                        variant={row.appointmentStatus=='completed'?'contained':'disabled'}
+                                                        color="success" 
+                                                        onClick={ ()=> {    
+                                                            // setHistory(row);    
+                                                            navigate(`/view-prescription/${row._id}`)                                        
+                                                        }}>
+                                                        View Prescription
+                                                    </Button>
+                                                )
+                                            }
+                                            
+                                            
+                                            <Dialog open={open} onClose={handleClose} >
+                                                  <Formik
+                                                    enableReinitialize
+                                                    initialValues={treatment}
+                                                    validationSchema={Yup.object().shape({
+                                                        complaint: Yup.string().max(255).required('Field is required'),
+                                                        remarks: Yup.string().max(255).required('Field is required'),
+                                                        fees: Yup.string().max(255).required('Field is required'),
+                                                        prescription: Yup.string().max(255).required('Field is required')
+                                                    })}
+                                                    onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
+                                                        try {
+                                                            handleSubmit(values);
+                                                            setStatus({ success: false });
+                                                            setSubmitting(false);
+                                                        } catch (err) {
+                                                            console.error(err);
+                                                            setStatus({ success: false });
+                                                            setErrors({ submit: err.message });
+                                                            setSubmitting(false);
+                                                        }
+                                                    }}
+                                                >
+                                                    {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values }) => (
+                                                        <form noValidate onSubmit={handleSubmit}>
+                                                            <DialogTitle>Prescription</DialogTitle>
+                                                <DialogContent>
+                                                <DialogContentText>
+                                                        Patient Name: {history.patient[0].firstname}  {history.patient[0].lastname} <br></br>
+                                                        Appointment: {history.date} <br></br>
+                                                        Slot: {history.startTime} to {history.endTime}
+                                                        <br></br><br></br>
+                                                </DialogContentText>
+                                                <Grid container spacing={3}>
+                                                    <Grid item xs={12} md={12}>
+                                                    <InputLabel htmlFor="firstname-login">Symptoms</InputLabel>
+                                                    <OutlinedInput
+                                                        id="firstname-login"
+                                                        type="text"
+                                                        value={values.complaint}
+                                                        name="complaint"
+                                                        onBlur={handleBlur}
+                                                        onChange={handleChange}
+                                                        fullWidth
+                                                        error={Boolean(touched.degree && errors.degree)}
+                                                    />
+                                                        {/* <TextField
+                                                        fullWidth
+                                                        id="symptoms"
+                                                        label="Symptoms"
+                                                        type="text"
+                                                        value={values.complaint}
+                                                        onBlur={handleBlur}
+                                                        onChange={handleChange}
+                                                        /> */}
+                                                        
+                                                    </Grid>
+
+                                                    <Grid item xs={12} md={12}>
+                                                    <InputLabel htmlFor="firstname-login">Prescription</InputLabel>
+                                                    <OutlinedInput
+                                                        id="firstname-login"
+                                                        type="text"
+                                                        value={values.prescription}
+                                                        name="prescription"
+                                                        multiline
+                                                        rows={4}
+                                                        onBlur={handleBlur}
+                                                        onChange={handleChange}
+                                                        fullWidth
+                                                        error={Boolean(touched.degree && errors.degree)}
+                                                    />
+                                                        {/* <TextField
+                                                        fullWidth 
+                                                        id="prescr"
+                                                        label="Prescription"
+                                                        type="text"
+                                                        multiline
+                                                        minRows={4}  
+                                                        value={values.prescription}
+                                                        onBlur={handleBlur}
+                                                        onChange={handleChange}
+                                                        /> */}
+                                                    </Grid>
+
+                                                    <Grid item xs={12} md={6}>
+                                                    <InputLabel htmlFor="firstname-login">Remarks</InputLabel>
+                                                    <OutlinedInput
+                                                        id="firstname-login"
+                                                        type="text"
+                                                        value={values.remarks}
+                                                        name="remarks"
+                                                        onBlur={handleBlur}
+                                                        onChange={handleChange}
+                                                        fullWidth
+                                                        error={Boolean(touched.degree && errors.degree)}
+                                                    />
+                                                        {/* <TextField
+                                                        fullWidth 
+                                                        id="start"
+                                                        label="Remarks"
+                                                        type="text"
+                                                        value={values.remarks}
+                                                        onBlur={handleBlur}
+                                                        onChange={handleChange}
+                                                        /> */}
+                                                        
+                                                    </Grid>
+
+                                                    <Grid item xs={12} md={6}>
+                                                    <InputLabel htmlFor="firstname-login">Fees (in INR)</InputLabel>
+                                                    <OutlinedInput
+                                                        id="firstname-login"
+                                                        type="text"
+                                                        value={values.fees}
+                                                        name="fees"
+                                                        onBlur={handleBlur}
+                                                        onChange={handleChange}
+                                                        fullWidth
+                                                        error={Boolean(touched.degree && errors.degree)}
+                                                    />
+                                                        {/* <TextField
+                                                        fullWidth 
+                                                        id="start"
+                                                        label="Fees (in INR)"
+                                                        type="text"
+                                                        value={values.fees}
+                                                        onBlur={handleBlur}
+                                                        onChange={handleChange}
+                                                        
+                                                        /> */}
+                                                        
+                                                    </Grid>
+                                                </Grid>
+                                                
+                                                
+                                                </DialogContent>
+                                                <DialogActions>
+                                                <Button variant="outlined" color="primary" onClick={handleClose}>Cancel</Button>
+                                                <Button variant="contained" color="success" onClick={handleSubmit}>Save and Mark as Completed</Button>
+                                                </DialogActions>
+                                                </form>
+                                                )}
+                                            </Formik>
+                                            </Dialog>
+                                        </TableCell>
                                     </TableRow>
                                 );
                             })}

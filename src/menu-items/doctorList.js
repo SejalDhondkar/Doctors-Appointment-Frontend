@@ -48,6 +48,13 @@ const doctorList = {
                     type: 'item',
                     url: '/patient-list',
                     icon: icons.ProfileOutlined
+                },
+                {
+                    id: 'manage-slots',
+                    title: 'Manage Slots',
+                    type: 'item',
+                    url: '/manage-slots',
+                    icon: icons.AntDesignOutlined
                 }
                 // {
                 //     id: 'util-typography',

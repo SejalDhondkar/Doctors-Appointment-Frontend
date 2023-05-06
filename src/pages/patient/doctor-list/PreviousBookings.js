@@ -1,9 +1,10 @@
 import PropTypes from 'prop-types';
-import { useState } from 'react';
+// import { useState } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
+import { useState, useEffect } from 'react';
 
 // material-ui
-import { Box, Link, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material';
+import { Box, Link, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography, Button } from '@mui/material';
 
 // third-party
 import NumberFormat from 'react-number-format';
@@ -11,17 +12,18 @@ import NumberFormat from 'react-number-format';
 // project import
 import Dot from 'components/@extended/Dot';
 import MainCard from 'components/MainCard';
+import { getPatientHistory, cancelSlot } from './api/List';
 
-function createData(trackingNo, name, fat, carbs, protein) {
-    return { trackingNo, name, fat, carbs, protein };
-}
+// function createData(trackingNo, name, fat, carbs, protein) {
+//     return { trackingNo, name, fat, carbs, protein };
+// }
 
-const rows = [
-    createData('Dr. Avni Sinha, MD', '02 December, 2022', '10:00 - 11:00', 0, 'In-Clinic'),
-    createData('Dr. Sanjana Singh, MBBS', '16 June, 2022', '14:00 - 15:00', 1, 'Online'),
-    createData('Dr. Avni Sinha, MD', '15 June, 2022', '11:00 - 12:00', 2, 'In-Clinic'),
-    createData('Dr. Abhijeet Desai, MD', '23 May, 2022', '12:00 - 13:00', 1, 'In-Clinic')
-];
+// const rows = [
+//     createData('Dr. Avni Sinha, MD', '02 December, 2022', '10:00 - 11:00', 0, 'In-Clinic'),
+//     createData('Dr. Sanjana Singh, MBBS', '16 June, 2022', '14:00 - 15:00', 1, 'Online'),
+//     createData('Dr. Avni Sinha, MD', '15 June, 2022', '11:00 - 12:00', 2, 'In-Clinic'),
+//     createData('Dr. Abhijeet Desai, MD', '23 May, 2022', '12:00 - 13:00', 1, 'In-Clinic')
+// ];
 
 function descendingComparator(a, b, orderBy) {
     if (b[orderBy] < a[orderBy]) {
@@ -53,34 +55,34 @@ function stableSort(array, comparator) {
 
 const headCells = [
     {
-        id: 'trackingNo',
+        id: 'name',
         align: 'left',
         disablePadding: false,
         label: 'Doctor Name'
     },
     {
-        id: 'name',
+        id: 'date',
         align: 'left',
         disablePadding: true,
         label: 'Appointment Date'
     },
     {
-        id: 'fat',
+        id: 'time',
         align: 'left',
         disablePadding: false,
         label: 'Appointment Time'
     },
     {
-        id: 'carbs',
+        id: 'status',
         align: 'left',
         disablePadding: false,
         label: 'Status'
     },
     {
-        id: 'protein',
+        id: 'action',
         align: 'right',
         disablePadding: false,
-        label: 'Mode'
+        label: 'Action'
     }
 ];
 
@@ -117,15 +119,15 @@ const OrderStatus = ({ status }) => {
     let title;
 
     switch (status) {
-        case 0:
-            color = 'warning';
+        case 'booked':
+            color = 'primary';
             title = 'Booked';
             break;
-        case 1:
+        case 'completed':
             color = 'success';
             title = 'Completed';
             break;
-        case 2:
+        case 'cancelled':
             color = 'error';
             title = 'Cancelled';
             break;
@@ -143,8 +145,10 @@ const OrderStatus = ({ status }) => {
 };
 
 OrderStatus.propTypes = {
-    status: PropTypes.number
+    status: PropTypes.string
 };
+
+import { useNavigate } from 'react-router-dom';
 
 // ==============================|| ORDER TABLE ||============================== //
 
@@ -152,8 +156,37 @@ export default function OrderTable() {
     const [order] = useState('asc');
     const [orderBy] = useState('');
     const [selected] = useState([]);
+    let navigate = useNavigate();
+
+    const [items, setItems] = useState([]);
 
     const isSelected = (trackingNo) => selected.indexOf(trackingNo) !== -1;
+
+    const getAllItems = async () => {
+        const response = await getPatientHistory();
+        if (response) {
+            setItems(response);
+            console.log(response);
+        }
+    };
+
+    const cancelThisSlot = async (slotId) => {
+        const data = {
+            bookingId: slotId
+        };
+        console.log(data);
+        const response = await cancelSlot(data);
+        if (response) {
+            console.log(response);
+            // setItems(response.data);
+            getAllItems();
+        }
+    };
+
+    useEffect(() => {
+        // console.log(docId);
+        getAllItems();
+    }, []);
 
     return (
         <Box>
@@ -181,8 +214,8 @@ export default function OrderTable() {
                     >
                         <OrderTableHead order={order} orderBy={orderBy} />
                         <TableBody>
-                            {stableSort(rows, getComparator(order, orderBy)).map((row, index) => {
-                                const isItemSelected = isSelected(row.trackingNo);
+                            {stableSort(items, getComparator(order, orderBy)).map((row, index) => {
+                                const isItemSelected = isSelected(row.name);
                                 const labelId = `enhanced-table-checkbox-${index}`;
 
                                 return (
@@ -192,20 +225,67 @@ export default function OrderTable() {
                                         sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                                         aria-checked={isItemSelected}
                                         tabIndex={-1}
-                                        key={row.trackingNo}
+                                        key={row.doctorId}
                                         selected={isItemSelected}
                                     >
-                                        <TableCell component="th" id={labelId} scope="row" align="left">
-                                            <Link color="secondary" component={RouterLink} to="">
-                                                {row.trackingNo}
+                                        <TableCell component="th" id={name} scope="row" align="left">
+                                            <Link color="black" component={RouterLink} to="">
+                                                {row.doctor[0].firstname} {row.doctor[0].lastname}
                                             </Link>
                                         </TableCell>
-                                        <TableCell align="left">{row.name}</TableCell>
-                                        <TableCell align="left">{row.fat}</TableCell>
+                                        <TableCell align="left">{row.date}</TableCell>
+                                        <TableCell align="left">{row.startTime} - {row.endTime}</TableCell>
                                         <TableCell align="left">
-                                            <OrderStatus status={row.carbs} />
+                                            <OrderStatus status={row.appointmentStatus} />
                                         </TableCell>
-                                        <TableCell align="right">{row.protein}</TableCell>
+                                        <TableCell align="right">
+                                            {/* <Button 
+                                                variant={row.appointmentStatus=='booked'?'outlined':'disabled'}
+                                                color="primary" 
+                                                onClick={ ()=> {                                                   
+                                                    cancelThisSlot(row._id);
+                                                }}>
+                                                Cancel Slot
+                                            </Button> */}
+                                            {
+                                                row.appointmentStatus=='booked' && !row.link && (
+                                                    <Button 
+                                                    variant={row.appointmentStatus=='booked'?'outlined':'disabled'}
+                                                    color="primary" 
+                                                    onClick={ ()=> {                                                   
+                                                        cancelThisSlot(row._id);
+                                                    }}>
+                                                    Cancel Slot
+                                                    </Button>
+                                                )
+                                            }
+                                            {
+                                                row.appointmentStatus=='booked' && row.link && (
+                                                    <Button 
+                                                    sx = {'margin-left: 10px'}
+                                                    variant="contained"
+                                                    color="primary" 
+                                                    onClick={ ()=> {                                                   
+                                                        window.open(row.link, "_blank");
+                                                    }}>
+                                                    Video Call Started. Join
+                                                    </Button>
+                                                )
+                                            }
+
+                                            {
+                                                row.appointmentStatus=='completed' && (
+                                                    <Button 
+                                                    variant="contained"
+                                                    color="success" 
+                                                    onClick={ ()=> {                      
+                                                        navigate(`/view-prescription/${row._id}`)
+                                                    }}>
+                                                    View Prescription
+                                                    </Button>
+                                                )
+                                            }
+                                        </TableCell>
                                     </TableRow>
                                 );
                             })}

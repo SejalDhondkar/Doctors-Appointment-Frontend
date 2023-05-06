@@ -10,6 +10,7 @@ const DashboardDefault = Loadable(lazy(() => import('pages/dashboard')));
 const DoctorList = Loadable(lazy(() => import('pages/patient/doctor-list/DocList')));
 const BookAppointment = Loadable(lazy(() => import('pages/patient/doctor-list/BookAppointment')));
 const PreviousBookings = Loadable(lazy(() => import('pages/patient/doctor-list/PreviousBookings')));
+const ViewPrescription = Loadable(lazy(() => import('pages/patient/doctor-list/ViewPrescription')));
 
 // ==============================|| MAIN ROUTING ||============================== //
 
@@ -26,12 +27,16 @@ const PatientRoutes = {
             element: <DoctorList />
         },
         {
-            path: 'book',
+            path: 'book/:doctorId',
             element: <BookAppointment />
         },
         {
             path: 'previous-bookings',
             element: <PreviousBookings />
+        },
+        {
+            path: 'view-prescription/:historyId',
+            element: <ViewPrescription />
         }
     ]
 };

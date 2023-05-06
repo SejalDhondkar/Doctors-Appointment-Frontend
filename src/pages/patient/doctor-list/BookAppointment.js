@@ -7,8 +7,8 @@ import MainCard from 'components/MainCard';
 import { useState, useEffect } from 'react';
 import ComponentSkeleton from '../../components-overview/ComponentSkeleton';
 
-import { getDoctorList } from './api/List';
-import { useNavigate } from 'react-router-dom';
+import { getSlotList, bookNewSlot } from './api/List';
+import { useNavigate, useParams } from 'react-router-dom';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
@@ -18,20 +18,46 @@ import { StaticDatePicker } from '@mui/x-date-pickers/StaticDatePicker';
 
 const BookAppointment = () => {
     const [value, setValue] = useState(new Date());
+    const [slots, setSlots] = useState(undefined);
+    const [slotId, setSlotId] = useState(undefined);
+    const [start, setStart] = useState(undefined);
+    const [end, setEnd] = useState(undefined);
+    const params = useParams();
 
-    const handleChange = (newValue) => {
-        setValue(newValue);
+    const docId = params.doctorId;
+
+    const getAllSlotList = async () => {
+        const data = {
+            docId: docId
+        };
+        // console.log(data);
+        const response = await getSlotList(data);
+        if (response) {
+            setSlots(response);
+            console.log(response);
+        }
     };
 
-    let navigate = useNavigate();
+    const bookSlot = async () => {
+        
+        const data = {
+            slotId,
+            doctorId: docId,
+            date: value.format('D MMMM YYYY'),
+            startTime: start,
+            endTime: end
+        };
+        // console.log(data);
+        const response = await bookNewSlot(data);
+        if (response) {
+            console.log(response);
+        }
+    };
 
-    // const apptPage = () => {
-    //     console.log('clicked');
-    // };
-
-    // useEffect(() => {
-    //     getDocList();
-    // }, []);
+    useEffect(() => {
+        // console.log(docId);
+        getAllSlotList();
+    }, []);
 
     return (
         <ComponentSkeleton>
@@ -56,12 +82,24 @@ const BookAppointment = () => {
                                 <Typography variant="h4">Select Time Slot:</Typography>
                                 <br></br>
                                 <Grid container spacing={3}>
-                                    <Grid item lg={2}>
-                                        <Button variant="outlined" color="primary">
-                                            9:00 - 10:00
-                                        </Button>
-                                    </Grid>
-                                    <Grid item lg={2}>
+                                    {
+                                        slots && slots.map((slot,index)=> (
+                                            <Grid item lg={2}>
+                                                <Button 
+                                                    variant={slot.status=='open' ? 'contained': 'disabled'} 
+                                                    color = {slotId === slot._id ? 'success' : 'primary'}
+                                                    onClick={ ()=> {
+                                                        setSlotId(slot._id); 
+                                                        setStart(slot.startTime); 
+                                                        setEnd(slot.endTime); 
+                                                    }}>
+                                                    {slot.startTime} - {slot.endTime}
+                                                </Button>
+                                            </Grid>
+                                        ))
+                                    }
+                                    
+                                    {/* <Grid item lg={2}>
                                         <Button variant="outlined" color="primary">
                                             10:00 - 11:00
                                         </Button>
@@ -105,49 +143,21 @@ const BookAppointment = () => {
                                         <Button variant="outlined" color="primary">
                                             18:00 - 19:00
                                         </Button>
-                                    </Grid>
-                                </Grid>
+                                    </Grid> */}
+                                </Grid> 
                                 <br></br>
                                 <Button
                                     size="large"
                                     variant="contained"
                                     color="primary"
                                     onClick={() => {
-                                        // navigate('/book');
+                                        bookSlot();
                                     }}
                                 >
                                     Confirm Booking
                                 </Button>
                             </Stack>
                         </MainCard>
-                        {/* <MainCard>
-                            <Stack spacing={1} sx={{ mt: -1.5 }}>
-                                <Typography variant="h4">Dr. Deepa Ghule, MD (IDCCM, FCEE)</Typography>
-                                <br></br>
-                                <Typography variant="h6">Specialization: Consultant Physician, Diabetologist</Typography>
-                                <Typography variant="h6">Experience: 10 years</Typography>
-                                <Typography variant="h6">Registration No.: 2013/03/0404</Typography>
-                                <br></br>
-                                <Typography variant="h4">Clinic Details</Typography>
-                                <Typography variant="h5">Life Care Clinic</Typography>
-                                <Typography variant="h6">
-                                    Address: Hasnain Tower 1St Floor Nr.Shimla Park M.P.Rd. Kausa Mumbra Mumbra Thane, Mumbai, Maharashtra
-                                    400612
-                                </Typography>
-                                <Typography variant="h5">Timings: Monday to Saturday, 11AM to 8PM</Typography>
-                                <br></br>
-                                <Button
-                                    size="large"
-                                    variant="contained"
-                                    color="primary"
-                                    onClick={() => {
-                                        navigate('/book');
-                                    }}
-                                >
-                                    Book Appointment
-                                </Button>
-                            </Stack>
-                        </MainCard> */}
                     </Stack>
                 </Grid>
             </Grid>
