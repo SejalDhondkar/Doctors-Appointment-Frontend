@@ -44,7 +44,7 @@ export default function LandingPage() {
     const userRole = getStorage('role');
 
     const medURL = '';
-    const riskURL = '';
+    const riskURL = 'https://diseasepred-bb0x.onrender.com';
 
     return (
         <ThemeProvider theme={theme}>
@@ -172,7 +172,11 @@ export default function LandingPage() {
                         </Grid>
                         {/* card 2 */}
                         <Grid xs={12} sm={6} md={4}>
-                            <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column', margin: 2, cursor: 'pointer' }}>
+                            <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column', margin: 2, cursor: 'pointer' }}
+                            onClick={ () => {
+                                // console.log(url);
+                                window.location.href = riskURL;
+                            }}>
                                 <CardMedia
                                     component="img"
                                     sx={{
@@ -202,7 +206,7 @@ export default function LandingPage() {
                             <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column', margin: 2, cursor: 'pointer' }}
                             onClick={ () => {
                                 // console.log(url);
-                                window.location.href = medURL;
+                                window.open(medURL, '_blank');
                             }}>
                                 <CardMedia
                                     component="img"
