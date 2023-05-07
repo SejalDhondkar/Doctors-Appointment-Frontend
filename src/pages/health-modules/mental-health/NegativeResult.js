@@ -20,25 +20,24 @@ function NegativeResult(props) {
                     Your Mental Health Score is {props.result}.
                 </Typography>
                 <Typography sx={{ fontWeight: 'bold', fontSize: 40, textAlign: 'center' }} variant="body2" color="text.secondary">
-                    Your score seems to be and we recommend you to book an appointment with our Mental Health Specialist by clicking the
+                    Your score seems to be low and we recommend you to book an appointment with our Mental Health Specialist by clicking the
                     button below.
                 </Typography>
             </CardContent>
             <CardActions sx={{ justifyContent: 'center' }}>
-                <Link
+                <Button
                     component="button"
                     sx={{ fontWeight: 'bold', fontSize: 20 }}
-                    variant="body2"
+                    variant="outlined"
                     onClick={() => {
                          navigate('/mentalcheck');
                     }}
                 >
                     Go to the Home Page
-                </Link>
-                <Link
-                    component="button"
+                </Button>
+                <Button
                     sx={{ fontWeight: 'bold', fontSize: 20 }}
-                    variant="body2"
+                    variant="contained"
                     onClick={() => {
                         if(!userName || !userRole){
                             // not logged in user
@@ -51,7 +50,7 @@ function NegativeResult(props) {
                     }}
                 >
                     Look up for Mental Health Councillor
-                </Link>
+                </Button>
             </CardActions>
         </Card>
     );

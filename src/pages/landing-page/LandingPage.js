@@ -107,7 +107,15 @@ export default function LandingPage() {
                             }
                             {   userName && userRole && (
                                 <Stack sx={{ pt: 1, pb: 4 }} direction="row" spacing={2} justifyContent="center">
-                                    <Button href="/" variant="contained">GO TO DASHBOARD</Button>
+                                    <Button onClick = {() => {
+                                        if(userRole=='Doctor'){
+                                            // not logged in user
+                                            navigate('/');
+                                        }else{
+                                            navigate('/doctors');
+                                        }
+                                    }}
+                                     variant="contained">GO TO DASHBOARD</Button>
                                 </Stack>
                             )
                             }
