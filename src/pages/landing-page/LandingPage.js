@@ -43,7 +43,7 @@ export default function LandingPage() {
     const userName = getStorage('name');
     const userRole = getStorage('role');
 
-    const medURL = '';
+    const medURL = 'https://altbrand.onrender.com/';
     const riskURL = 'https://diseasepred-bb0x.onrender.com';
 
     return (
@@ -175,7 +175,7 @@ export default function LandingPage() {
                             <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column', margin: 2, cursor: 'pointer' }}
                             onClick={ () => {
                                 // console.log(url);
-                                window.location.href = riskURL;
+                                window.open(riskURL, '_blank');
                             }}>
                                 <CardMedia
                                     component="img"
