@@ -6,7 +6,11 @@ import {
     BarcodeOutlined,
     BgColorsOutlined,
     FontSizeOutlined,
-    LoadingOutlined
+    LoadingOutlined,
+    FileSearchOutlined,
+    HeartOutlined,
+    ClockCircleOutlined,
+    CheckSquareOutlined,
 } from '@ant-design/icons';
 
 // icons
@@ -18,7 +22,11 @@ const icons = {
     BarcodeOutlined,
     AntDesignOutlined,
     LoadingOutlined,
-    AppstoreAddOutlined
+    AppstoreAddOutlined,
+    FileSearchOutlined,
+    HeartOutlined,
+    ClockCircleOutlined,
+    CheckSquareOutlined
 };
 
 const doctorList = {
@@ -28,27 +36,41 @@ const doctorList = {
             title: 'Navigation',
             type: 'group',
             children: [
-                {
-                    id: 'dashboard',
-                    title: 'Dashboard',
-                    type: 'item',
-                    url: '/',
-                    icon: icons.LoginOutlined
-                },
+                // {
+                //     id: 'dashboard',
+                //     title: 'Dashboard',
+                //     type: 'item',
+                //     url: '/',
+                //     icon: icons.LoginOutlined
+                // },
                 {
                     id: 'add-info',
-                    title: 'Search Doctors',
+                    title: 'Search All Doctors',
                     type: 'item',
                     url: '/doctors',
-                    icon: icons.ProfileOutlined
+                    icon: icons.FileSearchOutlined
+                },
+                {
+                    id: 'mental-health-list',
+                    title: 'Mental Health Professionals',
+                    type: 'item',
+                    url: '/doctors/mental-health-professionals',
+                    icon: icons.HeartOutlined
                 },
                 {
                     id: 'history',
-                    title: 'History',
+                    title: 'Your Appointments',
                     type: 'item',
                     url: '/previous-bookings',
-                    icon: icons.ProfileOutlined
-                }
+                    icon: icons.ClockCircleOutlined
+                },
+                {
+                    id: 'mental-health',
+                    title: 'Mental Health Quiz',
+                    type: 'item',
+                    url: '/user/mentalcheck',
+                    icon: icons.CheckSquareOutlined
+                },
                 // {
                 //     id: 'util-typography',
                 //     title: 'Typography',

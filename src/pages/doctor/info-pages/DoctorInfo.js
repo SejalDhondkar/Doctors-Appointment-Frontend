@@ -12,7 +12,9 @@ import {
     InputLabel,
     OutlinedInput,
     Stack,
-    Typography
+    Typography,
+    MenuItem,
+    Select
 } from '@mui/material';
 
 import { useState, useEffect } from 'react';
@@ -41,6 +43,7 @@ const DoctorInfo = () => {
         experience: '',
         specialization: '',
         registrationNo: '',
+        mentalProf: undefined,
         clinicName: '',
         clinicAddr: '',
         startTime: '',
@@ -49,6 +52,12 @@ const DoctorInfo = () => {
         firstFees: '',
         followupFees: ''
     });
+
+    const handleSelectChange = (event) => {
+        setDocInfo({
+            mentalProf: event.target.value
+        });
+      };
 
     const [reg, setReg] = useState('');
     // const initialValues = {
@@ -63,6 +72,7 @@ const DoctorInfo = () => {
     let navigate = useNavigate();
 
     const handleDocSubmit = async (values) => {
+        // console.log(values);
         const response = await addDoctorInfo(values);
         console.log(response);
         if (response) {
@@ -72,7 +82,7 @@ const DoctorInfo = () => {
 
     const getDocDetails = async () => {
         const response = await getDoctorInfo();
-        // console.log(response.degree);
+        // console.log(response);
         if (response) {
             // setDocInfo(response.data);
             // initialValues.degree = response.degree;
@@ -89,6 +99,7 @@ const DoctorInfo = () => {
                 experience: response.experience,
                 specialization: response.specialization,
                 registrationNo: response.registrationNo,
+                mentalProf: response.mentalProf,
                 clinicName: response.clinicName,
                 clinicAddr: response.clinicAddr,
                 startTime: response.startTime,
@@ -204,7 +215,7 @@ const DoctorInfo = () => {
                                                     name="experience"
                                                     onBlur={handleBlur}
                                                     onChange={handleChange}
-                                                    placeholder="Demo Inc."
+                                                    placeholder="10"
                                                     inputProps={{}}
                                                     error={Boolean(touched.experience && errors.experience)}
                                                 />
@@ -234,6 +245,23 @@ const DoctorInfo = () => {
                                                         {errors.registrationNo}
                                                     </FormHelperText>
                                                 )}
+                                            </Stack>
+                                        </Grid>
+                                        <Grid item xs={12} md={6}>
+                                            <Stack spacing={1}>
+                                                <InputLabel htmlFor="company-signup">Mental Health Professional?</InputLabel>
+                                                <Select
+                                                    labelId="demo-simple-select-label"
+                                                    id="demo-simple-select"
+                                                    value={values.mentalProf? 1: 0}
+                                                    name="mentalProf"
+                                                    onBlur={handleBlur}
+                                                    onChange={handleChange}
+                                                >
+                                                    <MenuItem value={1}>Yes</MenuItem>
+                                                    <MenuItem value={0}>No</MenuItem>
+                                                </Select>
+                                                
                                             </Stack>
                                         </Grid>
                                     </Grid>

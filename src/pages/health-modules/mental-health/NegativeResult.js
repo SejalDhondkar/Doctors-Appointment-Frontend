@@ -7,9 +7,12 @@ import CardMedia from '@mui/material/CardMedia';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Link from '@mui/material/Link';
+import { getStorage } from 'utils/localstorage-utils';
 
 function NegativeResult(props) {
     const navigate = useNavigate();
+    const userName = getStorage('name');
+    const userRole = getStorage('role');
     return (
         <Card sx={{ maxWidth: 1500, height: 900, ml: 10, mr: 10, justifyContent: 'center' }}>
             <CardContent>
@@ -37,7 +40,14 @@ function NegativeResult(props) {
                     sx={{ fontWeight: 'bold', fontSize: 20 }}
                     variant="body2"
                     onClick={() => {
-                         navigate('/mentalspecialist');
+                        if(!userName || !userRole){
+                            // not logged in user
+                            navigate('/newuser/doctors/mental-health-professionals');
+                        }else{
+                            // logged in user
+                            navigate('/doctors/mental-health-professionals');
+                        }
+                        //  navigate('/doctors/mental-health-professionals');
                     }}
                 >
                     Look up for Mental Health Councillor

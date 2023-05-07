@@ -38,8 +38,9 @@ const BookAppointment = () => {
         }
     };
 
-    const bookSlot = async () => {
-        
+    let navigate = useNavigate();
+
+    const bookSlot = async () => {        
         const data = {
             slotId,
             doctorId: docId,
@@ -51,6 +52,7 @@ const BookAppointment = () => {
         const response = await bookNewSlot(data);
         if (response) {
             console.log(response);
+            navigate('/previous-bookings');
         }
     };
 

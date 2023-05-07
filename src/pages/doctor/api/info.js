@@ -120,5 +120,16 @@ function saveMeetLink(body) {
     });
 }
 
+function getStatData(){
+    return new Promise(async (resolve, reject) => {
+        try {
+            const response = await interceptor('/api/docinfo/stats', 'GET');
+            resolve(response);
+        } catch (err) {
+            reject(err);
+        }
+    });
+}
 
-export { getDoctorInfo, addDoctorInfo, getDoctorHistory, getDoctorSlots, addDocSlot, enableDocSlot, disableDocSlot, cancelSlot, addTreatment, getMeetLink, saveMeetLink };
+
+export { getDoctorInfo, addDoctorInfo, getDoctorHistory, getDoctorSlots, addDocSlot, enableDocSlot, disableDocSlot, cancelSlot, addTreatment, getMeetLink, saveMeetLink, getStatData };

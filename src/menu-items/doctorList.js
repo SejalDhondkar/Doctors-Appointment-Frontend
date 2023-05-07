@@ -6,7 +6,11 @@ import {
     BarcodeOutlined,
     BgColorsOutlined,
     FontSizeOutlined,
-    LoadingOutlined
+    LoadingOutlined,
+    PieChartOutlined,
+    EditOutlined,
+    ClockCircleOutlined,
+    CarryOutOutlined
 } from '@ant-design/icons';
 
 // icons
@@ -18,7 +22,11 @@ const icons = {
     BarcodeOutlined,
     AntDesignOutlined,
     LoadingOutlined,
-    AppstoreAddOutlined
+    AppstoreAddOutlined,
+    PieChartOutlined,
+    EditOutlined,
+    ClockCircleOutlined,
+    CarryOutOutlined
 };
 
 const doctorList = {
@@ -33,28 +41,28 @@ const doctorList = {
                     title: 'Dashboard',
                     type: 'item',
                     url: '/',
-                    icon: icons.LoginOutlined
+                    icon: icons.PieChartOutlined
                 },
                 {
                     id: 'add-info',
                     title: 'Edit Details',
                     type: 'item',
                     url: '/details',
-                    icon: icons.ProfileOutlined
+                    icon: icons.EditOutlined
                 },
                 {
                     id: 'patient-list',
-                    title: 'Patients List',
+                    title: 'Your Appointments',
                     type: 'item',
                     url: '/patient-list',
-                    icon: icons.ProfileOutlined
+                    icon: icons.ClockCircleOutlined
                 },
                 {
                     id: 'manage-slots',
                     title: 'Manage Slots',
                     type: 'item',
                     url: '/manage-slots',
-                    icon: icons.AntDesignOutlined
+                    icon: icons.CarryOutOutlined
                 }
                 // {
                 //     id: 'util-typography',

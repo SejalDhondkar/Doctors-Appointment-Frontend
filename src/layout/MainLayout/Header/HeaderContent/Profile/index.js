@@ -66,7 +66,7 @@ const Profile = () => {
     const handleLogout = async () => {
         clearStorage();
         setIsLoggedIn(false);
-        navigate('/login');
+        navigate('/home');
     };
 
     const anchorRef = useRef(null);

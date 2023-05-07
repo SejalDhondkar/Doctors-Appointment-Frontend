@@ -54,7 +54,11 @@ const AuthLogin = () => {
             setRole(response.data.role);
             setStorage('role', response.data.role);
             setStorage('name', response.data.name);
-            navigate('/');
+            if(response.data.role==='Patient'){
+                navigate('/doctors');
+            }else{
+                navigate('/');
+            }
         }
     };
 

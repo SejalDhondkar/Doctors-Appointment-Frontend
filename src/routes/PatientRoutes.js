@@ -8,6 +8,7 @@ import MainLayout from 'layout/MainLayout';
 const DashboardDefault = Loadable(lazy(() => import('pages/dashboard')));
 
 const DoctorList = Loadable(lazy(() => import('pages/patient/doctor-list/DocList')));
+const MentalDoctorList = Loadable(lazy(() => import('pages/patient/doctor-list/MentalDocList')));
 const BookAppointment = Loadable(lazy(() => import('pages/patient/doctor-list/BookAppointment')));
 const PreviousBookings = Loadable(lazy(() => import('pages/patient/doctor-list/PreviousBookings')));
 const ViewPrescription = Loadable(lazy(() => import('pages/patient/doctor-list/ViewPrescription')));
@@ -18,13 +19,17 @@ const PatientRoutes = {
     path: '/',
     element: <MainLayout />,
     children: [
-        {
-            path: '/',
-            element: <DashboardDefault />
-        },
+        // {
+        //     path: '/',
+        //     element: <DashboardDefault />
+        // },
         {
             path: 'doctors',
             element: <DoctorList />
+        },
+        {
+            path: 'doctors/mental-health-professionals',
+            element: <MentalDoctorList />
         },
         {
             path: 'book/:doctorId',

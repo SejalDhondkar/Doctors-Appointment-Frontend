@@ -11,6 +11,17 @@ function getDoctorList() {
     });
 }
 
+function getMentalDoctorList() {
+    return new Promise(async (resolve, reject) => {
+        try {
+            const response = await interceptor('/api/docinfo/all/docs/mentalprof', 'GET');
+            resolve(response);
+        } catch (err) {
+            reject(err);
+        }
+    });
+}
+
 function getSlotList(body) {
     return new Promise(async (resolve, reject) => {
         try {
@@ -66,4 +77,4 @@ function getPrescription(body) {
     });
 }
 
-export { getDoctorList, getSlotList, bookNewSlot, getPatientHistory, cancelSlot, getPrescription };
+export { getDoctorList, getMentalDoctorList, getSlotList, bookNewSlot, getPatientHistory, cancelSlot, getPrescription };

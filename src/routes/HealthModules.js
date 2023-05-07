@@ -18,11 +18,11 @@ const HealthModules = {
     element: <MainLayout />,
     children: [
         {
-            path: '/mentalcheck',
+            path: '/user/mentalcheck',
             element: <MentalScore />
         },
         {
-            path: '/mentalresult',
+            path: '/user/mentalresult',
             element: <MentalResult />
         }
     ]

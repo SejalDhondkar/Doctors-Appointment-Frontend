@@ -6,7 +6,7 @@ import Radio from '@mui/material/Radio';
 import Button from '@mui/material/Button';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import './mentalstyle.css';
-
+import { getStorage } from 'utils/localstorage-utils';
  
 
 
@@ -21,6 +21,17 @@ const validateForm = (values) => {
     };
 
 const navigate = useNavigate();
+
+const userName = getStorage('name');
+const userRole = getStorage('role');
+
+// const redirect = () => {
+//     if (!userName || !userRole) {
+//         navigate('/mentalresult');
+//     }else{
+//         navigate('/user/mentalresult');
+//     }
+// };
     
 return (
     <>
@@ -39,11 +50,22 @@ return (
             }}
             validate={validateForm}
             onSubmit={(values) => {
-                navigate('/mentalresult', {
-                    state: {
-                        values
-                    }
-                });
+                if(!userName || !userRole){
+                    // not logged in user
+                    navigate('/mentalresult', {
+                        state: {
+                            values
+                        }
+                    });
+                }else{
+                    // logged in user
+                    navigate('/user/mentalresult', {
+                        state: {
+                            values
+                        }
+                    });
+                }
+                
             }}
             render={({ values }) => (
                 <Form className="container">
